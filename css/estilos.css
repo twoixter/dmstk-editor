@@ -1,0 +1,17 @@
+
+
+	.editor {
+		background: #CCC;
+		font-family: Courier New, Courier, monospace;
+
+		width: 800px;
+		height: 300px;
+		overflow: auto;
+	}
+
+
+	.code-line {
+		white-space: pre;
+		border: 1px solid #ddd;
+		-moz-border-radius: 6px;
+	}
