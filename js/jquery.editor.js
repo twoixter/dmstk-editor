@@ -1,52 +1,101 @@
-jQuery.fn.edit = function()
-{
-	var elem = $(this);
-	var lines = elem.text().split("\n");
-	elem.text("");
+(function($){
 	
-	$.each(lines, function(i,e){
-		
-// console.log(i, e, jQuery.trim(e).length);
+$.fn.edit = function(options)
+{
+    var opts = $.extend({}, $.fn.edit.defaults, options);
 
-		if (jQuery.trim(e).length || (i && i<lines.length - 1)) {
-			if (jQuery.trim(e).length > 0) {
-				elem.append("<div class='code-line'>" + e + "</div>");
-			} else {
-				elem.append("<div class='code-line'>&nbsp;</div>");
-			}
-		}
-	});
+    return this.each(function() {
+		var self = $(this);
+		var lines = self.text().split("\n");
+		self.text("");
 
-console.log(this);
-
-	this[0].contentEditable = true;
-	this.css("border", "1px solid #333");
-
-	$(this).keypress(function(e){
-			// this == el elemento editor (#editme)
-			// e.target == e.currentTarget también es el editor... :-(
-			if (e.keyCode == 13) {
-				e.preventDefault();
-				return;
-			}
-
-			var sel = window.getSelection();
-//			console.log(window.getSelection());
-			console.log(sel);
-			console.log(sel.anchorNode.parentNode);
-		});
-
-/*
- * Para hacer el hover en modo "live"
-
-
-		$(".code-line").live("mouseover", function(){
-			$(this).css("background", "red");
+		/*
+		 * Para hacer el hover en modo "live"
+		 */
+		$("#" + self[0].id + " .code-line").live("mouseover", function(){
+			$(this).css("background", "#bbb");
+// __debug(data_edit);
 		}).live("mouseout", function(){
 			$(this).css("background", "transparent");
+// __debug(data_edit);
 		});
 
-*/
+		$.each(lines, function(i,e){
+			if (jQuery.trim(e).length || (i && i<lines.length - 1)) {
+				if (jQuery.trim(e).length > 0) {
+					self.append("<div class='code-line'>" + e + "</div>");
+				} else {
+					self.append("<div class='code-line'>&nbsp;</div>");
+				}
+			}
+		});
+
+		this.contentEditable = true;
+		self.css("border", "1px solid #333");
+
+		self.keypress(__keyPress);
+	});
+
+	function __debug(obj)
+	{
+		if (window.console && window.console.log)
+			window.console.log( obj );
+	};
+
+	function __keyPress(e)
+	{
+		__debug(this);
+		
+		// this == el elemento editor (#editme)
+		// e.target == e.currentTarget también es el editor... :-(
+		switch (e.keyCode) {
+			case 13:
+				__breakLine(window.getSelection());
+				
+				e.preventDefault();
+				break;
+		}
+
+		var sel = window.getSelection();
+//		__debug(sel);
+	}
+
+
+	/*
+	 *  El cursor está al principio del texto:
+	 *  anchorNode == div#editme && parentNode == body
+	 *
+	 *  El cursor está al final del texto:
+	 *  anchorNode == div.code-line  && parentNode = div#editme
+	 *
+	 *  En cualquier otro caso:
+	 *  anchorNode == "texto (3)" && parentNode = div.code-line
+	 */
+	function __breakLine(e)
+	{
+		var anode = e.anchorNode;
+		var pnode = e.anchorNode.parentNode;
+
+		// Insertamos al principio...
+		if ($(anode).is("#editme")) {
+			__debug( self /* __lineFormat("&nbsp;") */ );
+		}
+
+//		__debug(e.anchorNode);
+//		__debug(e.anchorNode.parentNode);
+	}
+
+
+	function __lineFormat(txt) {
+    	return "<class='code-line'>" + txt + "</div>";
+  	};
+
+
+  	$.fn.edit.defaults = {
+    	foreground: "red",
+    	background: "yellow"
+  	};
+
 
 
 /*
@@ -63,11 +112,7 @@ console.log(this);
         container.style.whiteSpace = "nowrap";
     }
 */
-  
 };
+  
+})(jQuery);
 
-
-
-$(function(){
-	$("#editme").edit();
-});
