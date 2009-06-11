@@ -1,3 +1,7 @@
+/*
+ *
+ *
+ */
 (function($){
 	
 $.fn.edit = function(options)
@@ -5,9 +9,18 @@ $.fn.edit = function(options)
     var opts = $.extend({}, $.fn.edit.defaults, options);
 
     return this.each(function() {
+		this.abcde = true;
+		__debug(this);
+		
 		var self = $(this);
 		var lines = self.text().split("\n");
+
 		self.text("");
+
+		window.setTimeout(function(){
+			console.log(self);
+		}, 300);
+
 
 		/*
 		 * Para hacer el hover en modo "live"
@@ -36,22 +49,42 @@ $.fn.edit = function(options)
 		self.keypress(__keyPress);
 	});
 
-	function __debug(obj)
+
+
+
+
+	function __debug(obj, txt)
 	{
 		if (window.console && window.console.log)
 			window.console.log( obj );
+
+		$("#editdebug").text(txt || "debugging");
 	};
+
+	function __doTimer()
+	{
+		console.log(self);
+		window.setTimeout(function(){
+			console.log(self);
+		}, 300);
+	}
+
+	function __endTimer()
+	{
+		__debug("Timer ended", "Timer ended");
+	}
 
 	function __keyPress(e)
 	{
 		__debug(this);
-		
+
 		// this == el elemento editor (#editme)
 		// e.target == e.currentTarget también es el editor... :-(
 		switch (e.keyCode) {
 			case 13:
 				__breakLine(window.getSelection());
-				
+				__doTimer();
+
 				e.preventDefault();
 				break;
 		}
@@ -95,7 +128,6 @@ $.fn.edit = function(options)
     	foreground: "red",
     	background: "yellow"
   	};
-
 
 
 /*

@@ -1,15 +1,12 @@
 
-
 	.editor {
 		background: #CCC;
 		font-family: Courier New, Courier, monospace;
 		font-size: 12px;
-
 		width: 800px;
 		height: 300px;
 		overflow: auto;
 	}
-
 
 	.code-line {
 		white-space: pre;
