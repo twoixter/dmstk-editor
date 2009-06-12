@@ -45,9 +45,30 @@
 		 */
 
 		if (e.keyCode == 13) {
+			self._debug(window.getSelection());
+			
 			self._breakLine(window.getSelection());
 			e.preventDefault();
 		}
+		e.preventDefault();
+
+		// Test for manually inserting text...
+		if (e.charCode && !e.keyCode && !e.metaKey && !e.ctrlKey && !e.altKey) {
+			var range = window.getSelection().getRangeAt(0);
+			var node = window.document.createTextNode(e.charCode);
+			var selct = window.getSelection();
+			var range2 = range.cloneRange();
+			// Insert text at cursor position
+			selct.removeAllRanges();
+			range.deleteContents();
+			range.insertNode(node);
+			// Move the cursor to the end of text
+			range2.selectNode(node);
+			range2.collapse(false);
+			selct.removeAllRanges();
+			selct.addRange(range2);
+		}
+		// **** END OF TEST ****
 
 
 //		self._enableTimer();
@@ -67,6 +88,8 @@
 
 	_breakLine: function(sel){
 		var self = this;
+
+		self._debug(sel);
 		
 		// sel.anchorNode ?  sel.focusNode ?
 		// https://developer.mozilla.org/en/DOM/selection
@@ -95,11 +118,21 @@
 		self._debug(txt.substr(sel.anchorOffset));
 
 		closestLine.after(
-			self._lineFormat(txt.substr(sel.anchorOffset))
+				self._lineFormat(txt.substr(sel.anchorOffset))
 			);
 		closestLine.replaceWith(
 				self._lineFormat(txt.substr(0, sel.anchorOffset))
 			);
+
+/*
+		  	var range = document.createRange();
+			range.setStartAfter(closestLine[0]);
+			range.collapse(true);
+	      	sel.removeAllRanges();
+	      	sel.addRange(range);
+			self._debug(window.getSelection());
+*/
+
 
 //		self._debug(sel.anchorNode);
 		self._debug(closestLine[0].lineNo);
@@ -129,11 +162,10 @@
 		return elem;
   	},
 
-
 	_debug: function(obj) {
 		if (window.console && window.console.log)
 			window.console.log(obj);
-	},
+	}
 
 });
 
