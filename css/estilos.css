@@ -11,5 +11,8 @@
 	.code-line {
 		white-space: pre;
 		border: 1px solid #ddd;
+		margin: 0px;
+		padding: 0px;
 		-moz-border-radius: 8px;
 	}
+

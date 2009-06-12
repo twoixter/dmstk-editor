@@ -21,7 +21,8 @@
 		var self = this;
 		var lines = self.element.text().split(/[\n\r]/);
 
-		self.element.text("");
+		self.element.empty();
+		self.element.append("<br>");
 		$.each(lines, function(i,e){
 			if ($.trim(e).length || (i && i<lines.length - 1)) {
 				self.element.append(
@@ -44,15 +45,19 @@
 		 *
 		 */
 
+		self._enableTimer();
+		
 		if (e.keyCode == 13) {
+/*
 			self._debug(window.getSelection());
 			
 			self._breakLine(window.getSelection());
 			e.preventDefault();
+*/
 		}
-		e.preventDefault();
 
 		// Test for manually inserting text...
+/*
 		if (e.charCode && !e.keyCode && !e.metaKey && !e.ctrlKey && !e.altKey) {
 			var range = window.getSelection().getRangeAt(0);
 			var node = window.document.createTextNode(e.charCode);
@@ -69,6 +74,7 @@
 			selct.addRange(range2);
 		}
 		// **** END OF TEST ****
+*/
 
 
 //		self._enableTimer();
@@ -142,21 +148,34 @@
 		var self = this;
 
 		self.element.stopTime();
-		self.element.oneTime(1000, function(){
-			self._debug( self.element );
-			self._debug( self );
+		self.element.oneTime(200, function(){
+			self._reflow();
 		})
 	},
 
+	_reflow: function(){
+		var self = this;
+
+		self.element.contents().each(function(i,e){
+			console.log(e.nodeType, e);
+		});
+	},
+
+
+
+
+
+
+
 	_lineFormat: function(txt, options) {
 		var newTxt = $.trim(txt).length ? txt : "&nbsp;";
-    	var elem = $("<div class='code-line'>" + newTxt + "</div>");
+    	var elem = $("<p class='code-line'>" + newTxt + "</p>");
 		var ops  = { lineNo: 0, dirty: true };
 
 		// The creation of the above DOM element could fail in cases where
 		// the XHTML structure of txt is invalid, so we must ensure a clean,
 		// empty DOM node instead.
-		if (!elem.length) elem = $("<div class='code-line'>&nbsp;</div>");
+		if (!elem.length) elem = $("<p class='code-line'>&nbsp;</p>");
 
 		$.extend(elem[0], ops, options);
 		return elem;
